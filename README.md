@@ -1,3 +1,11 @@
+![Embedded Dev Setup Banner](docs/assets/banner.png)
+
+![Linux](https://img.shields.io/badge/Linux-Ubuntu-orange?logo=ubuntu)
+![macOS](https://img.shields.io/badge/macOS-Sonoma-blue?logo=apple)
+![Windows](https://img.shields.io/badge/Windows-11-blue?logo=windows)
+![PlatformIO](https://img.shields.io/badge/PlatformIO-ready-brightgreen?logo=platformio)
+![License](https://img.shields.io/badge/License-MIT-yellow?logo=open-source-initiative)
+
 # Embedded Development Environment Setup
 
 A cross-platform setup for Embedded Systems Development.
