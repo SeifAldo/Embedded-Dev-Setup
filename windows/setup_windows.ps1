@@ -1,33 +1,46 @@
-# 🪟 Windows Embedded Dev Setup Script
-# Run as Administrator
+# 🪟 Embedded Development Environment Setup for Windows
+Write-Host "🚀 Starting Embedded Development Environment Setup for Windows..." -ForegroundColor Cyan
 
-Write-Host "🚀 Starting Windows Embedded Development Environment Setup..." -ForegroundColor Cyan
-
-# Enable Developer Mode
-Write-Host "⚙️ Enabling Developer Mode..."
-Start-Process powershell -Verb RunAs -ArgumentList 'Set-ExecutionPolicy Bypass -Scope Process -Force'
-Start-Process powershell -Verb RunAs -ArgumentList 'Set-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\AppModelUnlock" -Name "AllowDevelopmentWithoutDevLicense" -Value 1'
-
-# Install Chocolatey
-if (-not (Get-Command choco -ErrorAction SilentlyContinue)) {
-    Write-Host "🍫 Installing Chocolatey..."
-    Set-ExecutionPolicy Bypass -Scope Process -Force
-    [System.Net.ServicePointManager]::SecurityProtocol = [System.Net.ServicePointManager]::SecurityProtocol -bor 3072
-    Invoke-Expression ((New-Object System.Net.WebClient).DownloadString('https://chocolatey.org/install.ps1'))
+# --- Check for Administrator privileges ---
+if (-not ([Security.Principal.WindowsPrincipal][Security.Principal.WindowsIdentity]::GetCurrent()).IsInRole([Security.Principal.WindowsBuiltInRole] "Administrator")) {
+    Write-Host "❌ Please run PowerShell as Administrator!" -ForegroundColor Red
+    exit
 }
 
-# Install essential tools
-Write-Host "📦 Installing essential development tools..."
-choco install -y git vscode cmake make mingw golang python openjdk nodejs gradle
+# --- Enable execution policy for scripts ---
+Set-ExecutionPolicy Bypass -Scope Process -Force
 
-# Install Embedded tools
-Write-Host "🔧 Installing Embedded toolchain..."
-choco install -y arm-none-eabi-gcc dfu-util openocd stm32cubemx
+# --- Install Chocolatey ---
+if (!(Get-Command choco -ErrorAction SilentlyContinue)) {
+    Write-Host "📦 Installing Chocolatey..."
+    Set-ExecutionPolicy Bypass -Scope Process -Force
+    [System.Net.ServicePointManager]::SecurityProtocol = [System.Net.ServicePointManager]::SecurityProtocol -bor 3072
+    Invoke-Expression ((New-Object System.Net.WebClient).DownloadString('https://community.chocolatey.org/install.ps1'))
+} else {
+    Write-Host "✅ Chocolatey is already installed."
+}
 
-# Install Visual Studio Code extensions (for PlatformIO + STM32)
+# --- Update Chocolatey ---
+choco upgrade chocolatey -y
+
+# --- Install Essential Tools ---
+choco install -y git cmake make ninja python openjdk nodejs golang wget curl
+
+# --- ARM Toolchain & Debug Tools ---
+choco install -y gcc-arm-embedded openocd stlink dfu-util
+
+# --- Serial Communication Tools ---
+choco install -y putty teraterm
+
+# --- VS Code & PlatformIO ---
+choco install -y vscode
+Write-Host "⚙️ Installing PlatformIO..."
 code --install-extension platformio.platformio-ide
-code --install-extension ms-vscode.cpptools
-code --install-extension ms-python.python
 
-Write-Host "✅ Setup complete! Please restart your terminal."
+# --- STM32CubeIDE (manual) ---
+Write-Host "🧰 Please download and install STM32CubeIDE manually from:"
+Write-Host "👉 https://www.st.com/en/development-tools/stm32cubeide.html"
+
+# --- Final Message ---
+Write-Host "✅ Windows Embedded Development Environment setup complete!" -ForegroundColor Green
 

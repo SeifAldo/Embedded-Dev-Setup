@@ -1,55 +1,39 @@
 #!/bin/bash
 
-set -e
+echo "🍏 Starting Embedded Development Environment Setup for macOS..."
 
-echo "🔧 Starting Embedded Development Environment Setup for macOS..."
-
-# Update Homebrew
+# --- Check for Homebrew ---
 if ! command -v brew &> /dev/null; then
-    echo "Installing Homebrew..."
+    echo "📦 Homebrew not found. Installing..."
     /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+else
+    echo "✅ Homebrew is already installed."
 fi
 
+# --- Update Homebrew ---
 brew update
 
-# Core tools
-brew install \
-    git \
-    cmake \
-    make \
-    ninja \
-    python3 \
-    openjdk@21 \
-    go \
-    node \
-    gdb \
-    openocd \
-    dfu-util \
-    minicom \
-    screen \
-    pkg-config \
-    wget \
-    unzip
+# --- Install Essential Tools ---
+brew install git cmake make ninja python3 openjdk node npm go wget curl
 
-echo "✅ Core development tools installed successfully!"
+# --- ARM Toolchain ---
+brew install arm-none-eabi-gcc openocd stlink dfu-util
 
-# ARM toolchain
-brew install --cask gcc-arm-embedded
+# --- Serial & Debug Tools ---
+brew install minicom screen lrzsz
 
-# PlatformIO
-pip3 install -U platformio
-
-# Visual Studio Code
-if ! command -v code &> /dev/null; then
-    brew install --cask visual-studio-code
+# --- PlatformIO (via pipx) ---
+if ! command -v pipx &> /dev/null; then
+    brew install pipx
+    pipx ensurepath
 fi
 
-# STM32CubeIDE
-mkdir -p ~/Tools && cd ~/Tools
-if [ ! -f stm32cubeide-latest.sh ]; then
-    echo "Please manually download STM32CubeIDE installer for macOS to ~/Tools"
-    echo "Then run the installer manually."
-fi
+pipx install platformio
 
-echo "✅ macOS embedded development environment setup completed successfully!"
+# --- STM32CubeIDE (manual installation link) ---
+echo "🧰 STM32CubeIDE must be installed manually from STMicroelectronics:"
+echo "👉 https://www.st.com/en/development-tools/stm32cubeide.html"
+
+# --- Finish ---
+echo "✅ macOS Embedded Development Environment setup complete!"
 
